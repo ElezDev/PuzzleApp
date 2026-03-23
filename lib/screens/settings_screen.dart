@@ -80,6 +80,12 @@ class SettingsScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
+            Text('Notas del desarrollador', style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            _DeveloperNotesCard(theme: theme),
+
+            const SizedBox(height: 24),
+
             // About
             Text('Acerca de', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
@@ -98,6 +104,138 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _DeveloperNotesCard extends StatelessWidget {
+  final ThemeData theme;
+
+  const _DeveloperNotesCard({required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = theme.brightness == Brightness.dark;
+    final titleColor = isDark ? Colors.white : const Color(0xFF231942);
+    final bodyColor = isDark
+        ? Colors.white.withValues(alpha: 0.84)
+        : const Color(0xFF3C355F);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF130F40),
+            Color(0xFF6C63FF),
+            Color(0xFFFF6B9D),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryLight.withValues(alpha: 0.24),
+            blurRadius: 24,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              'EDWIN LEDEZMA BY ELEZDEV',
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: Colors.white,
+                letterSpacing: 0.8,
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            'Esta app fue imaginada, diseñada y construida por Edwin Ledezma.',
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: titleColor,
+              fontWeight: FontWeight.w700,
+              height: 1.2,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Puzlessapp es un ritual de neón, lógica e intuición creado para mentes curiosas por ElezDev.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: bodyColor,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: const [
+              _DeveloperBadge(
+                icon: Icons.draw_rounded,
+                label: 'Diseño original',
+              ),
+              _DeveloperBadge(
+                icon: Icons.code_rounded,
+                label: 'Build by ElezDev',
+              ),
+              _DeveloperBadge(
+                icon: Icons.auto_awesome_rounded,
+                label: 'Neon puzzle energy',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeveloperBadge extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _DeveloperBadge({
+    required this.icon,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.18),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 16),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ],
       ),
     );
   }

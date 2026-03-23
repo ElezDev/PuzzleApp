@@ -1,6 +1,6 @@
 name: puzlessapp
-description: "A beautiful puzzle and brain games app."
-publish_to: 'none'
+description: "A hypnotic puzzle arcade of neon logic, crafted by Edwin Ledezma by ElezDev."
+publish_to: 'true'
 version: 1.0.0+1
 
 environment:

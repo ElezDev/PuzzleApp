@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PreferenceSpecifiers</key>
+	<array>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>CREATOR</string>
+			<key>FooterText</key>
+			<string>This experience was imagined, designed, and built by Edwin Ledezma by ElezDev.</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+			<key>Title</key>
+			<string>App By</string>
+			<key>Key</key>
+			<string>developer_signature</string>
+			<key>DefaultValue</key>
+			<string>EDWIN LEDEZMA BY ELEZDEV</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+			<key>Title</key>
+			<string>Signature</string>
+			<key>Key</key>
+			<string>brand_copy</string>
+			<key>DefaultValue</key>
+			<string>Crafted with vision, instinct, and neon logic.</string>
+		</dict>
+	</array>
+	<key>StringsTable</key>
+	<string>Root</string>
+</dict>
+</plist>
