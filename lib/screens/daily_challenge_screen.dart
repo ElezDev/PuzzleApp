@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../core/app_theme.dart';
 import '../providers/app_provider.dart';
 import '../models/game_info.dart';
+import '../l10n/app_strings.dart';
 import 'games/tic_tac_toe_screen.dart';
 import 'games/memory_screen.dart';
 import 'games/slide_puzzle_screen.dart';
@@ -90,9 +91,11 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Desafío Diario'),
+        title: Text(strings.dailyChallenge),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.pop(context),
@@ -112,7 +115,8 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
-                  DateFormat('EEEE, d MMMM yyyy', 'es').format(DateTime.now()),
+                  DateFormat('EEEE, d MMMM yyyy', strings.dateLocale)
+                      .format(DateTime.now()),
                   style: TextStyle(
                     color: AppTheme.accent,
                     fontWeight: FontWeight.w600,
@@ -157,7 +161,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      _todayGame.name,
+                      strings.gameName(_todayGame.id),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 28,
@@ -173,7 +177,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        'Dificultad: $_todayDifficulty',
+                        '${strings.dailyDifficultyLabel}: ${strings.difficultyLabel(_todayDifficulty)}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -183,7 +187,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      _todayGame.description,
+                      strings.gameDescription(_todayGame.id),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,
@@ -212,8 +216,8 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       const Icon(Icons.check_circle_rounded,
                           color: AppTheme.success, size: 40),
                       const SizedBox(height: 8),
-                      const Text(
-                        '¡Desafío completado!',
+                      Text(
+                        strings.challengeCompleted,
                         style: TextStyle(
                           color: AppTheme.success,
                           fontWeight: FontWeight.w700,
@@ -222,7 +226,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Puntuación: $_challengeScore',
+                        strings.challengeScore(_challengeScore),
                         style: TextStyle(
                           color: AppTheme.success.withValues(alpha: 0.8),
                           fontSize: 14,
@@ -242,8 +246,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                   icon: Icon(_isCompleted
                       ? Icons.replay_rounded
                       : Icons.play_arrow_rounded),
-                  label:
-                      Text(_isCompleted ? 'Jugar de nuevo' : '¡Jugar ahora!'),
+                  label: Text(_isCompleted ? strings.playAgain : strings.playNow),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(

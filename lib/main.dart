@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'core/app_theme.dart';
+import 'l10n/app_strings.dart';
 import 'providers/app_provider.dart';
 import 'screens/main_shell.dart';
 
@@ -28,11 +29,14 @@ class PuzlessApp extends StatelessWidget {
     final provider = context.watch<AppProvider>();
 
     return MaterialApp(
-      title: 'Puzless',
+      onGenerateTitle: (context) => AppStrings.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: provider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      locale: provider.locale,
+      supportedLocales: AppStrings.supportedLocales,
+      localizationsDelegates: AppStrings.localizationsDelegates,
       home: const MainShell(),
     );
   }

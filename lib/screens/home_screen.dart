@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../providers/app_provider.dart';
 import '../models/game_info.dart';
+import '../l10n/app_strings.dart';
 import '../widgets/game_card.dart';
 import '../core/app_theme.dart';
 import 'games/tic_tac_toe_screen.dart';
@@ -58,6 +59,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
 
     return SafeArea(
       child: CustomScrollView(
@@ -74,12 +76,12 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '¡Hola, ${provider.username}!',
+                          strings.homeGreeting(provider.username),
                           style: theme.textTheme.headlineSmall,
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '¿Listo para un desafío?',
+                          strings.homeChallengePrompt,
                           style: theme.textTheme.bodyMedium,
                         ),
                       ],
@@ -100,7 +102,7 @@ class HomeScreen extends StatelessWidget {
                         const Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
                         const SizedBox(width: 4),
                         Text(
-                          'Nv. ${provider.level}',
+                          strings.levelShort(provider.level),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -132,7 +134,7 @@ class HomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Progreso',
+                          strings.progress,
                           style: theme.textTheme.titleMedium,
                         ),
                         Text(
@@ -161,17 +163,17 @@ class HomeScreen extends StatelessWidget {
                         _MiniStat(
                           icon: Icons.sports_esports_rounded,
                           value: '${provider.gamesPlayed}',
-                          label: 'Jugados',
+                          label: strings.played,
                         ),
                         _MiniStat(
                           icon: Icons.emoji_events_rounded,
                           value: '${provider.gamesWon}',
-                          label: 'Ganados',
+                          label: strings.won,
                         ),
                         _MiniStat(
                           icon: Icons.local_fire_department_rounded,
                           value: '${provider.currentStreak}',
-                          label: 'Racha',
+                          label: strings.streak,
                         ),
                       ],
                     ),
@@ -221,12 +223,12 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 14),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Desafío Diario',
+                              strings.dailyChallenge,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
@@ -235,7 +237,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 2),
                             Text(
-                              '¡Completa el reto de hoy y gana XP extra!',
+                              strings.dailyChallengeCta,
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 12,
@@ -257,7 +259,7 @@ class HomeScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-              child: Text('Juegos', style: theme.textTheme.titleLarge),
+              child: Text(strings.games, style: theme.textTheme.titleLarge),
             ),
           ),
 

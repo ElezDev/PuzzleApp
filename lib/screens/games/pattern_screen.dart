@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_theme.dart';
+import '../../l10n/app_strings.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
@@ -134,13 +135,14 @@ class _PatternScreenState extends State<PatternScreen> {
 
       Future.delayed(const Duration(milliseconds: 500), () {
         if (!mounted) return;
+        final strings = AppStrings.of(context);
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (_) => GameResultDialog(
             won: _round > 3,
             score: _score,
-            gameTitle: 'Patrones - Ronda $_round',
+            gameTitle: strings.patternGameTitle(_round),
             onPlayAgain: () {
               Navigator.pop(context);
               _startGame();
@@ -168,11 +170,12 @@ class _PatternScreenState extends State<PatternScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
     final cols = _buttonCount <= 4 ? 2 : 3;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Patrones'),
+        title: Text(strings.gameName('pattern')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.pop(context),
@@ -198,12 +201,12 @@ class _PatternScreenState extends State<PatternScreen> {
                 children: [
                   _InfoChip(
                     icon: Icons.layers_rounded,
-                    label: 'Ronda $_round',
+                    label: strings.roundLabel(_round),
                     color: AppTheme.primaryLight,
                   ),
                   _InfoChip(
                     icon: Icons.star_rounded,
-                    label: '$_score pts',
+                    label: strings.pointsShort(_score),
                     color: AppTheme.warning,
                   ),
                 ],
@@ -215,8 +218,8 @@ class _PatternScreenState extends State<PatternScreen> {
               duration: const Duration(milliseconds: 300),
               child: Text(
                 _isShowing
-                    ? 'Observa la secuencia...'
-                    : (_canTap ? 'Tu turno - repite la secuencia' : ''),
+                    ? strings.watchSequence
+                    : (_canTap ? strings.repeatSequence : ''),
                 key: ValueKey('$_isShowing$_canTap'),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w500,
@@ -293,7 +296,7 @@ class _PatternScreenState extends State<PatternScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _startGame,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Reiniciar'),
+                  label: Text(strings.restart),
                 ),
               ),
             ),

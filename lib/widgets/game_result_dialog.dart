@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import '../core/app_theme.dart';
+import '../l10n/app_strings.dart';
 
 class GameResultDialog extends StatefulWidget {
   final bool won;
@@ -53,6 +54,7 @@ class _GameResultDialogState extends State<GameResultDialog>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -82,14 +84,14 @@ class _GameResultDialogState extends State<GameResultDialog>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    widget.won ? '¡Felicidades!' : '¡Sigue intentando!',
+                    widget.won ? strings.congratulations : strings.keepTrying,
                     style: theme.textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     widget.won
-                        ? 'Has completado ${widget.gameTitle}'
-                        : 'No te rindas, puedes hacerlo',
+                        ? strings.completedGame(widget.gameTitle)
+                        : strings.dontGiveUp,
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -98,7 +100,7 @@ class _GameResultDialogState extends State<GameResultDialog>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _StatChip(
-                        label: 'Puntos',
+                        label: strings.points,
                         value: '${widget.score}',
                         icon: Icons.star_rounded,
                         color: AppTheme.warning,
@@ -106,7 +108,7 @@ class _GameResultDialogState extends State<GameResultDialog>
                       if (widget.timeText != null) ...[
                         const SizedBox(width: 16),
                         _StatChip(
-                          label: 'Tiempo',
+                          label: strings.time,
                           value: widget.timeText!,
                           icon: Icons.timer_rounded,
                           color: AppTheme.primaryLight,
@@ -127,7 +129,7 @@ class _GameResultDialogState extends State<GameResultDialog>
                             ),
                             side: BorderSide(color: theme.colorScheme.primary),
                           ),
-                          child: const Text('Inicio'),
+                          child: Text(strings.home),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -140,7 +142,7 @@ class _GameResultDialogState extends State<GameResultDialog>
                               borderRadius: BorderRadius.circular(14),
                             ),
                           ),
-                          child: const Text('Jugar'),
+                          child: Text(strings.play),
                         ),
                       ),
                     ],

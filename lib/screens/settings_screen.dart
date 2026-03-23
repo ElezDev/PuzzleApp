@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../core/app_theme.dart';
+import '../l10n/app_strings.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -10,6 +11,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -19,16 +21,16 @@ class SettingsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
-            Text('Ajustes', style: theme.textTheme.headlineSmall),
+            Text(strings.settings, style: theme.textTheme.headlineSmall),
             const SizedBox(height: 24),
 
             // Appearance
-            Text('Apariencia', style: theme.textTheme.titleMedium),
+            Text(strings.appearance, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             _SettingsTile(
               icon: Icons.dark_mode_rounded,
-              title: 'Modo oscuro',
-              subtitle: provider.isDarkMode ? 'Activado' : 'Desactivado',
+              title: strings.darkMode,
+              subtitle: provider.isDarkMode ? strings.on : strings.off,
               color: AppTheme.primaryLight,
               trailing: Switch.adaptive(
                 value: provider.isDarkMode,
@@ -39,13 +41,51 @@ class SettingsScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
+            Text(strings.language, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            _SettingsTile(
+              icon: Icons.language_rounded,
+              title: strings.language,
+              subtitle: provider.languageCode == 'system'
+                  ? strings.useSystemLanguage
+                  : strings.languageLabel(provider.languageCode),
+              color: AppTheme.primaryLight,
+              trailing: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: provider.languageCode,
+                  borderRadius: BorderRadius.circular(16),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'system',
+                      child: Text(strings.systemDefault),
+                    ),
+                    DropdownMenuItem(
+                      value: 'es',
+                      child: Text(strings.spanish),
+                    ),
+                    DropdownMenuItem(
+                      value: 'en',
+                      child: Text(strings.english),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      provider.setLanguage(value);
+                    }
+                  },
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
             // Sound
-            Text('Sonido y vibración', style: theme.textTheme.titleMedium),
+            Text(strings.soundAndVibration, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             _SettingsTile(
               icon: Icons.volume_up_rounded,
-              title: 'Sonidos',
-              subtitle: provider.soundEnabled ? 'Activados' : 'Desactivados',
+              title: strings.sounds,
+              subtitle: provider.soundEnabled ? strings.on : strings.off,
               color: AppTheme.success,
               trailing: Switch.adaptive(
                 value: provider.soundEnabled,
@@ -56,8 +96,8 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 8),
             _SettingsTile(
               icon: Icons.music_note_rounded,
-              title: 'Música',
-              subtitle: provider.musicEnabled ? 'Activada' : 'Desactivada',
+              title: strings.music,
+              subtitle: provider.musicEnabled ? strings.on : strings.off,
               color: AppTheme.accent,
               trailing: Switch.adaptive(
                 value: provider.musicEnabled,
@@ -68,8 +108,8 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 8),
             _SettingsTile(
               icon: Icons.vibration_rounded,
-              title: 'Vibración',
-              subtitle: provider.hapticEnabled ? 'Activada' : 'Desactivada',
+              title: strings.vibration,
+              subtitle: provider.hapticEnabled ? strings.on : strings.off,
               color: AppTheme.warning,
               trailing: Switch.adaptive(
                 value: provider.hapticEnabled,
@@ -80,18 +120,18 @@ class SettingsScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            Text('Notas del desarrollador', style: theme.textTheme.titleMedium),
+            Text(strings.developerNotes, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
-            _DeveloperNotesCard(theme: theme),
+            _DeveloperNotesCard(theme: theme, strings: strings),
 
             const SizedBox(height: 24),
 
             // About
-            Text('Acerca de', style: theme.textTheme.titleMedium),
+            Text(strings.about, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             _SettingsTile(
               icon: Icons.info_outline_rounded,
-              title: 'Versión',
+              title: strings.version,
               subtitle: '1.0.0',
               color: AppTheme.primaryLight,
             ),
@@ -99,7 +139,7 @@ class SettingsScreen extends StatelessWidget {
             _SettingsTile(
               icon: Icons.favorite_rounded,
               title: 'Puzless',
-              subtitle: 'Hecho con amor para mentes curiosas',
+              subtitle: strings.madeForCuriousMinds,
               color: AppTheme.error,
             ),
           ],
@@ -111,8 +151,9 @@ class SettingsScreen extends StatelessWidget {
 
 class _DeveloperNotesCard extends StatelessWidget {
   final ThemeData theme;
+  final AppStrings strings;
 
-  const _DeveloperNotesCard({required this.theme});
+  const _DeveloperNotesCard({required this.theme, required this.strings});
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +195,7 @@ class _DeveloperNotesCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
             ),
             child: Text(
-              'EDWIN LEDEZMA BY ELEZDEV',
+              strings.developerSignature,
               style: theme.textTheme.labelLarge?.copyWith(
                 color: Colors.white,
                 letterSpacing: 0.8,
@@ -163,7 +204,7 @@ class _DeveloperNotesCard extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           Text(
-            'Esta app fue imaginada, diseñada y construida por Edwin Ledezma.',
+            strings.developerCardTitle,
             style: theme.textTheme.titleLarge?.copyWith(
               color: titleColor,
               fontWeight: FontWeight.w700,
@@ -172,7 +213,7 @@ class _DeveloperNotesCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Puzlessapp es un ritual de neón, lógica e intuición creado para mentes curiosas por ElezDev.',
+            strings.developerCardBody,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: bodyColor,
               height: 1.45,
@@ -182,18 +223,18 @@ class _DeveloperNotesCard extends StatelessWidget {
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            children: const [
+            children: [
               _DeveloperBadge(
                 icon: Icons.draw_rounded,
-                label: 'Diseño original',
+                label: strings.developerBadgeDesign,
               ),
               _DeveloperBadge(
                 icon: Icons.code_rounded,
-                label: 'Build by ElezDev',
+                label: strings.developerBadgeBuild,
               ),
               _DeveloperBadge(
                 icon: Icons.auto_awesome_rounded,
-                label: 'Neon puzzle energy',
+                label: strings.developerBadgeEnergy,
               ),
             ],
           ),
@@ -288,7 +329,10 @@ class _SettingsTile extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) ?trailing,
+          ...switch (trailing) {
+            final widget? => [widget],
+            null => const <Widget>[],
+          },
         ],
       ),
     );

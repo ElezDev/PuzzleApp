@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_strings.dart';
 import '../models/game_info.dart';
 
 class GameCard extends StatelessWidget {
@@ -9,6 +10,8 @@ class GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -43,7 +46,7 @@ class GameCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                game.name,
+                strings.gameName(game.id),
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -52,7 +55,7 @@ class GameCard extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                game.description,
+                strings.gameDescription(game.id),
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.85),
                   fontSize: 11,
@@ -69,7 +72,7 @@ class GameCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  game.category,
+                  strings.gameCategory(game.id),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,

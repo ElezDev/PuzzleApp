@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_theme.dart';
+import '../../l10n/app_strings.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
@@ -191,13 +192,14 @@ class _ColorMatchScreenState extends State<ColorMatchScreen>
 
       Future.delayed(const Duration(milliseconds: 500), () {
         if (!mounted) return;
+        final strings = AppStrings.of(context);
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (_) => GameResultDialog(
             won: _round > 5,
             score: _score,
-            gameTitle: 'Color Match - Ronda $_round',
+            gameTitle: strings.colorMatchGameTitle(_round),
             onPlayAgain: () {
               Navigator.pop(context);
               _startGame();
@@ -226,10 +228,11 @@ class _ColorMatchScreenState extends State<ColorMatchScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Color Match'),
+        title: Text(strings.gameName('color_match')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.pop(context),
@@ -255,12 +258,12 @@ class _ColorMatchScreenState extends State<ColorMatchScreen>
                 children: [
                   _InfoChip(
                     icon: Icons.star_rounded,
-                    label: '$_score pts',
+                    label: strings.pointsShort(_score),
                     color: AppTheme.warning,
                   ),
                   _InfoChip(
                     icon: Icons.layers_rounded,
-                    label: 'Ronda $_round',
+                    label: strings.roundLabel(_round),
                     color: AppTheme.primaryLight,
                   ),
                   Row(
@@ -298,7 +301,7 @@ class _ColorMatchScreenState extends State<ColorMatchScreen>
             const SizedBox(height: 16),
             // Instruction
             Text(
-              '¿De qué COLOR está escrita la palabra?',
+              strings.colorMatchInstruction(),
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
@@ -353,7 +356,7 @@ class _ColorMatchScreenState extends State<ColorMatchScreen>
                       ),
                       child: Center(
                         child: Text(
-                          _getColorName(_options[i]),
+                          strings.colorName(_getColorName(_options[i])),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,

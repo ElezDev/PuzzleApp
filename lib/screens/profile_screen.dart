@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../core/app_theme.dart';
+import '../l10n/app_strings.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -10,6 +11,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -65,7 +67,10 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text('Nivel ${provider.level}', style: theme.textTheme.bodyMedium),
+            Text(
+              '${strings.profileLevelLabel} ${provider.level}',
+              style: theme.textTheme.bodyMedium,
+            ),
 
             const SizedBox(height: 24),
 
@@ -81,8 +86,8 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const Text(
-                    'Experiencia Total',
+                  Text(
+                    strings.totalExperience,
                     style: TextStyle(color: Colors.white70, fontSize: 13),
                   ),
                   const SizedBox(height: 4),
@@ -106,7 +111,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Siguiente nivel: Nv. ${provider.level + 1}',
+                    strings.nextLevel(provider.level + 1),
                     style: const TextStyle(color: Colors.white60, fontSize: 12),
                   ),
                 ],
@@ -122,7 +127,7 @@ class ProfileScreen extends StatelessWidget {
                   child: _StatCard(
                     icon: Icons.sports_esports_rounded,
                     value: '${provider.gamesPlayed}',
-                    label: 'Partidas',
+                    label: strings.matchesPlayed,
                     color: AppTheme.primaryLight,
                   ),
                 ),
@@ -131,7 +136,7 @@ class ProfileScreen extends StatelessWidget {
                   child: _StatCard(
                     icon: Icons.emoji_events_rounded,
                     value: '${provider.gamesWon}',
-                    label: 'Victorias',
+                    label: strings.victories,
                     color: AppTheme.success,
                   ),
                 ),
@@ -144,7 +149,7 @@ class ProfileScreen extends StatelessWidget {
                   child: _StatCard(
                     icon: Icons.local_fire_department_rounded,
                     value: '${provider.currentStreak}',
-                    label: 'Racha actual',
+                    label: strings.currentStreak,
                     color: AppTheme.warning,
                   ),
                 ),
@@ -153,7 +158,7 @@ class ProfileScreen extends StatelessWidget {
                   child: _StatCard(
                     icon: Icons.star_rounded,
                     value: '${provider.bestStreak}',
-                    label: 'Mejor racha',
+                    label: strings.bestStreak,
                     color: AppTheme.accent,
                   ),
                 ),
@@ -165,7 +170,7 @@ class ProfileScreen extends StatelessWidget {
               value: provider.gamesPlayed > 0
                   ? '${((provider.gamesWon / provider.gamesPlayed) * 100).toStringAsFixed(1)}%'
                   : '0%',
-              label: 'Tasa de victoria',
+              label: strings.winRate,
               color: AppTheme.primaryLight,
             ),
           ],
@@ -175,18 +180,19 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _editUsername(BuildContext context, AppProvider provider) {
+    final strings = AppStrings.of(context);
     final controller = TextEditingController(text: provider.username);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Cambiar nombre'),
+        title: Text(strings.changeName),
         content: TextField(
           controller: controller,
           autofocus: true,
           maxLength: 20,
           decoration: InputDecoration(
-            hintText: 'Tu nombre',
+            hintText: strings.yourName,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -195,7 +201,7 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -205,7 +211,7 @@ class ProfileScreen extends StatelessWidget {
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Guardar'),
+            child: Text(strings.save),
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_theme.dart';
+import '../../l10n/app_strings.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
@@ -198,6 +199,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
 
   void _showResult(bool won, {bool isDraw = false}) {
     final provider = context.read<AppProvider>();
+    final strings = AppStrings.of(context);
     if (won) provider.sound.playWin();
 
     final score = won ? 100 : (isDraw ? 30 : 0);
@@ -216,7 +218,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
         builder: (_) => GameResultDialog(
           won: won,
           score: score,
-          gameTitle: isDraw ? 'Triqui - Empate' : 'Triqui',
+          gameTitle: strings.ticTacToeGameTitle(draw: isDraw),
           onPlayAgain: () {
             Navigator.pop(context);
             _resetGame();
@@ -233,10 +235,11 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Triqui'),
+        title: Text(strings.gameName('tic_tac_toe')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.pop(context),
@@ -253,7 +256,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
                 children: [
                   Expanded(
                     child: _ModeButton(
-                      label: 'vs IA',
+                      label: strings.versusAi,
                       icon: Icons.smart_toy_rounded,
                       selected: !_vsPlayer,
                       onTap: () {
@@ -265,7 +268,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
                   const SizedBox(width: 10),
                   Expanded(
                     child: _ModeButton(
-                      label: 'vs Jugador',
+                      label: strings.versusPlayer,
                       icon: Icons.people_rounded,
                       selected: _vsPlayer,
                       onTap: () {
@@ -293,8 +296,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
               duration: const Duration(milliseconds: 250),
               child: Text(
                 _gameOver
-                    ? (_winner.isNotEmpty ? '¡$_winner gana!' : '¡Empate!')
-                    : 'Turno de ${_isXTurn ? "X" : "O"}',
+                    ? (_winner.isNotEmpty
+                        ? strings.winnerText(_winner)
+                        : strings.draw)
+                    : strings.turnOf(_isXTurn ? 'X' : 'O'),
                 key: ValueKey('$_isXTurn$_gameOver'),
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: _isXTurn ? AppTheme.primaryLight : AppTheme.accent,
@@ -354,7 +359,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
                 child: ElevatedButton.icon(
                   onPressed: _resetGame,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Nueva partida'),
+                  label: Text(strings.newMatch),
                 ),
               ),
             ),

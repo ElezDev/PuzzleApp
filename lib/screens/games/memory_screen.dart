@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_theme.dart';
+import '../../l10n/app_strings.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
@@ -192,6 +193,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
 
   void _onGameComplete() {
     final provider = context.read<AppProvider>();
+    final strings = AppStrings.of(context);
     provider.sound.playWin();
 
     final timeBonus = max(0, 300 - _stopwatch.elapsed.inSeconds);
@@ -215,7 +217,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
           won: true,
           score: score,
           timeText: _timeText,
-          gameTitle: 'Memoria',
+          gameTitle: strings.gameName('memory'),
           onPlayAgain: () {
             Navigator.pop(context);
             _startGame();
@@ -231,9 +233,11 @@ class _MemoryScreenState extends State<MemoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Memoria'),
+        title: Text(strings.gameName('memory')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.pop(context),
@@ -264,7 +268,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                   ),
                   _InfoChip(
                     icon: Icons.touch_app_rounded,
-                    label: '$_moves movimientos',
+                    label: strings.movesCount(_moves),
                     color: AppTheme.accent,
                   ),
                   _InfoChip(
@@ -305,7 +309,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _startGame,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Reiniciar'),
+                  label: Text(strings.restart),
                 ),
               ),
             ),

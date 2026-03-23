@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_strings.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
@@ -21,6 +22,8 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+
     return Scaffold(
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
@@ -41,21 +44,21 @@ class _MainShellState extends State<MainShell> {
           child: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (i) => setState(() => _currentIndex = i),
-            items: const [
+            items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.videogame_asset_rounded),
-                activeIcon: Icon(Icons.videogame_asset_rounded),
-                label: 'Juegos',
+                icon: const Icon(Icons.videogame_asset_rounded),
+                activeIcon: const Icon(Icons.videogame_asset_rounded),
+                label: strings.navGames,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline_rounded),
-                activeIcon: Icon(Icons.person_rounded),
-                label: 'Perfil',
+                icon: const Icon(Icons.person_outline_rounded),
+                activeIcon: const Icon(Icons.person_rounded),
+                label: strings.navProfile,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.settings_outlined),
-                activeIcon: Icon(Icons.settings_rounded),
-                label: 'Ajustes',
+                icon: const Icon(Icons.settings_outlined),
+                activeIcon: const Icon(Icons.settings_rounded),
+                label: strings.navSettings,
               ),
             ],
           ),

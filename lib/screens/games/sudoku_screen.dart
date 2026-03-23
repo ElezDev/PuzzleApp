@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_theme.dart';
+import '../../l10n/app_strings.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
@@ -164,6 +165,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
         Future.delayed(const Duration(milliseconds: 500), () {
           if (!mounted) return;
+          final strings = AppStrings.of(context);
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -171,7 +173,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
               won: false,
               score: 0,
               timeText: _timeText,
-              gameTitle: 'Sudoku',
+              gameTitle: strings.gameName('sudoku'),
               onPlayAgain: () {
                 Navigator.pop(context);
                 _startGame();
@@ -218,6 +220,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
 
         Future.delayed(const Duration(milliseconds: 500), () {
           if (!mounted) return;
+          final strings = AppStrings.of(context);
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -225,7 +228,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
               won: true,
               score: score,
               timeText: _timeText,
-              gameTitle: 'Sudoku',
+              gameTitle: strings.gameName('sudoku'),
               onPlayAgain: () {
                 Navigator.pop(context);
                 _startGame();
@@ -253,10 +256,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final strings = AppStrings.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sudoku'),
+        title: Text(strings.gameName('sudoku')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.pop(context),
@@ -286,7 +290,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                   ),
                   _InfoChip(
                     icon: Icons.close_rounded,
-                    label: 'Errores: $_errors/$_maxErrors',
+                    label: strings.errorsLabel(_errors, _maxErrors),
                     color: AppTheme.error,
                   ),
                 ],
@@ -432,7 +436,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                     child: OutlinedButton.icon(
                       onPressed: _onErase,
                       icon: const Icon(Icons.backspace_rounded, size: 18),
-                      label: const Text('Borrar'),
+                      label: Text(strings.erase),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -446,7 +450,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
                     child: ElevatedButton.icon(
                       onPressed: _startGame,
                       icon: const Icon(Icons.refresh_rounded, size: 18),
-                      label: const Text('Nuevo'),
+                      label: Text(strings.newGame),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(

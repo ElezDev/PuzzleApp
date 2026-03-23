@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_theme.dart';
+import '../../l10n/app_strings.dart';
 import '../../providers/app_provider.dart';
 import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
@@ -127,6 +128,7 @@ class _SlidePuzzleScreenState extends State<SlidePuzzleScreen> {
 
   void _onWin() {
     final provider = context.read<AppProvider>();
+    final strings = AppStrings.of(context);
     provider.sound.playWin();
 
     final timeBonus = max(0, 500 - _stopwatch.elapsed.inSeconds);
@@ -150,7 +152,7 @@ class _SlidePuzzleScreenState extends State<SlidePuzzleScreen> {
           won: true,
           score: score,
           timeText: _timeText,
-          gameTitle: 'Deslizar',
+          gameTitle: strings.gameName('slide_puzzle'),
           onPlayAgain: () {
             Navigator.pop(context);
             _startGame();
@@ -173,10 +175,11 @@ class _SlidePuzzleScreenState extends State<SlidePuzzleScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Deslizar'),
+        title: Text(strings.gameName('slide_puzzle')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.pop(context),
@@ -206,7 +209,7 @@ class _SlidePuzzleScreenState extends State<SlidePuzzleScreen> {
                   ),
                   _InfoChip(
                     icon: Icons.swap_horiz_rounded,
-                    label: '$_moves movimientos',
+                    label: strings.movesCount(_moves),
                     color: AppTheme.accent,
                   ),
                 ],
@@ -270,7 +273,7 @@ class _SlidePuzzleScreenState extends State<SlidePuzzleScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _startGame,
                   icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('Reiniciar'),
+                  label: Text(strings.restart),
                 ),
               ),
             ),

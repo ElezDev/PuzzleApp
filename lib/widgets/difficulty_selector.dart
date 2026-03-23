@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/app_theme.dart';
+import '../l10n/app_strings.dart';
 
 class DifficultySelector extends StatelessWidget {
   final String selected;
@@ -15,6 +16,8 @@ class DifficultySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: difficulties.map((d) {
@@ -25,7 +28,7 @@ class DifficultySelector extends StatelessWidget {
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeInOut,
             child: ChoiceChip(
-              label: Text(d),
+              label: Text(strings.difficultyLabel(d)),
               selected: isSelected,
               onSelected: (_) => onChanged(d),
               selectedColor: AppTheme.primaryLight,

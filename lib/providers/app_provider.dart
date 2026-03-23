@@ -10,6 +10,7 @@ class AppProvider extends ChangeNotifier {
   bool _soundEnabled = true;
   bool _musicEnabled = false;
   bool _hapticEnabled = true;
+  String _languageCode = 'system';
   Map<String, dynamic> _profile = {};
   bool _isLoaded = false;
 
@@ -17,6 +18,8 @@ class AppProvider extends ChangeNotifier {
   bool get soundEnabled => _soundEnabled;
   bool get musicEnabled => _musicEnabled;
   bool get hapticEnabled => _hapticEnabled;
+  String get languageCode => _languageCode;
+  Locale? get locale => _languageCode == 'system' ? null : Locale(_languageCode);
   Map<String, dynamic> get profile => _profile;
   bool get isLoaded => _isLoaded;
   DatabaseHelper get db => _db;
@@ -51,6 +54,11 @@ class AppProvider extends ChangeNotifier {
     _hapticEnabled = haptic != 'false';
     _sound.setHapticEnabled(_hapticEnabled);
 
+    final languageCode = await _db.getSetting('language_code');
+    _languageCode = (languageCode == null || languageCode.isEmpty)
+        ? 'system'
+        : languageCode;
+
     _profile = await _db.getProfile();
     _isLoaded = true;
     notifyListeners();
@@ -79,6 +87,12 @@ class AppProvider extends ChangeNotifier {
     _hapticEnabled = !_hapticEnabled;
     _sound.setHapticEnabled(_hapticEnabled);
     await _db.setSetting('haptic_enabled', _hapticEnabled.toString());
+    notifyListeners();
+  }
+
+  Future<void> setLanguage(String code) async {
+    _languageCode = code;
+    await _db.setSetting('language_code', code);
     notifyListeners();
   }
 
