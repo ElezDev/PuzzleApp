@@ -1,4 +1,4 @@
-package com.example.puzlessapp
+package com.elezdev.puzlessapp
 
 import io.flutter.embedding.android.FlutterActivity
 
