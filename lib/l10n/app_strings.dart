@@ -271,6 +271,27 @@ class AppStrings {
       : 'Guess the word letter by letter';
   String wordWas(String word) =>
       isSpanish ? 'La palabra era: $word' : 'The word was: $word';
+  String get hintLabel => isSpanish ? 'Pista' : 'Hint';
+  String get showHint => isSpanish ? 'Ver pista' : 'Show hint';
+
+  String hangmanCategory(String key) {
+    switch (key) {
+      case 'animal':
+        return isSpanish ? 'Animal' : 'Animal';
+      case 'objeto':
+        return isSpanish ? 'Objeto' : 'Object';
+      case 'lugar':
+        return isSpanish ? 'Lugar' : 'Place';
+      case 'naturaleza':
+        return isSpanish ? 'Naturaleza' : 'Nature';
+      case 'comida':
+        return isSpanish ? 'Comida' : 'Food';
+      case 'color':
+        return isSpanish ? 'Color' : 'Color';
+      default:
+        return '';
+    }
+  }
 
   String difficultyLabel(String value) {
     switch (value) {
