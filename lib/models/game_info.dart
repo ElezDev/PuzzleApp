@@ -9,6 +9,7 @@ class GameInfo {
   final Color gradientEnd;
   final String category;
   final bool supportsMultiplayer;
+  final int requiredLevel;
 
   const GameInfo({
     required this.id,
@@ -19,6 +20,7 @@ class GameInfo {
     required this.gradientEnd,
     required this.category,
     this.supportsMultiplayer = false,
+    this.requiredLevel = 1,
   });
 
   static const List<GameInfo> allGames = [
@@ -76,6 +78,26 @@ class GameInfo {
       color: Color(0xFFFF6B6B),
       gradientEnd: Color(0xFFFF8E8E),
       category: 'Reflejos',
+    ),
+    GameInfo(
+      id: '2048',
+      name: '2048',
+      description: 'Une los números y llega a 2048',
+      icon: Icons.grid_on_rounded,
+      color: Color(0xFFF97F51),
+      gradientEnd: Color(0xFFFFA26B),
+      category: 'Números',
+      requiredLevel: 3,
+    ),
+    GameInfo(
+      id: 'minesweeper',
+      name: 'Buscaminas',
+      description: 'Despeja el campo sin pisar minas',
+      icon: Icons.flag_rounded,
+      color: Color(0xFF2C3E50),
+      gradientEnd: Color(0xFF4A6572),
+      category: 'Lógica',
+      requiredLevel: 6,
     ),
   ];
 }

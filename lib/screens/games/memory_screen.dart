@@ -283,20 +283,43 @@ class _MemoryScreenState extends State<MemoryScreen> {
             // Card grid
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: _gridSize,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                  ),
-                  itemCount: _cards.length,
-                  itemBuilder: (context, index) {
-                    final card = _cards[index];
-                    return _MemoryCardWidget(
-                      card: card,
-                      onTap: () => _onCardTap(index),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    const spacing = 6.0;
+                    final cols = _gridSize;
+                    final rows = _rows;
+                    final cellW =
+                        (constraints.maxWidth - spacing * (cols - 1)) / cols;
+                    final cellH =
+                        (constraints.maxHeight - spacing * (rows - 1)) / rows;
+                    final cell = min(cellW, cellH);
+                    final boardW = cell * cols + spacing * (cols - 1);
+                    final boardH = cell * rows + spacing * (rows - 1);
+                    return Center(
+                      child: SizedBox(
+                        width: boardW,
+                        height: boardH,
+                        child: GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: cols,
+                            mainAxisSpacing: spacing,
+                            crossAxisSpacing: spacing,
+                            mainAxisExtent: cell,
+                          ),
+                          itemCount: _cards.length,
+                          itemBuilder: (context, index) {
+                            final card = _cards[index];
+                            return _MemoryCardWidget(
+                              card: card,
+                              iconSize: cell * 0.42,
+                              onTap: () => _onCardTap(index),
+                            );
+                          },
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -337,8 +360,13 @@ class _MemoryCard {
 class _MemoryCardWidget extends StatelessWidget {
   final _MemoryCard card;
   final VoidCallback onTap;
+  final double iconSize;
 
-  const _MemoryCardWidget({required this.card, required this.onTap});
+  const _MemoryCardWidget({
+    required this.card,
+    required this.onTap,
+    required this.iconSize,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -378,14 +406,16 @@ class _MemoryCardWidget extends StatelessWidget {
                 ? Icon(
                     card.icon,
                     key: const ValueKey('front'),
-                    color: card.isMatched ? card.color.withValues(alpha: 0.5) : Colors.white,
-                    size: 30,
+                    color: card.isMatched
+                        ? card.color.withValues(alpha: 0.5)
+                        : Colors.white,
+                    size: iconSize,
                   )
                 : Icon(
                     Icons.question_mark_rounded,
                     key: const ValueKey('back'),
                     color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                    size: 24,
+                    size: iconSize * 0.8,
                   ),
           ),
         ),

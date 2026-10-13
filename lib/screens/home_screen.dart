@@ -12,12 +12,27 @@ import 'games/slide_puzzle_screen.dart';
 import 'games/pattern_screen.dart';
 import 'games/sudoku_screen.dart';
 import 'games/color_match_screen.dart';
+import 'games/game_2048_screen.dart';
+import 'games/minesweeper_screen.dart';
 import 'daily_challenge_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   void _openGame(BuildContext context, GameInfo game) {
+    final provider = context.read<AppProvider>();
+    final strings = AppStrings.of(context);
+
+    if (provider.level < game.requiredLevel) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(strings.lockedUntilLevel(game.requiredLevel)),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
     Widget screen;
     switch (game.id) {
       case 'tic_tac_toe':
@@ -32,6 +47,10 @@ class HomeScreen extends StatelessWidget {
         screen = const SudokuScreen();
       case 'color_match':
         screen = const ColorMatchScreen();
+      case '2048':
+        screen = const Game2048Screen();
+      case 'minesweeper':
+        screen = const MinesweeperScreen();
       default:
         return;
     }
@@ -87,30 +106,62 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Level badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.primaryLight, AppTheme.accent],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
-                        const SizedBox(width: 4),
-                        Text(
-                          strings.levelShort(provider.level),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
+                  // Level + coins badge
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppTheme.warning.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.monetization_on_rounded,
+                                color: AppTheme.warning, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${provider.coins}',
+                              style: const TextStyle(
+                                color: AppTheme.warning,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppTheme.primaryLight, AppTheme.accent],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.bolt_rounded,
+                                color: Colors.white, size: 18),
+                            const SizedBox(width: 4),
+                            Text(
+                              strings.levelShort(provider.level),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -276,6 +327,7 @@ class HomeScreen extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final game = GameInfo.allGames[index];
+                  final unlocked = provider.level >= game.requiredLevel;
                   return AnimationConfiguration.staggeredGrid(
                     position: index,
                     columnCount: 2,
@@ -284,6 +336,7 @@ class HomeScreen extends StatelessWidget {
                       child: FadeInAnimation(
                         child: GameCard(
                           game: game,
+                          unlocked: unlocked,
                           onTap: () => _openGame(context, game),
                         ),
                       ),

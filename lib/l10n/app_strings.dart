@@ -59,6 +59,48 @@ class AppStrings {
   String get currentStreak => isSpanish ? 'Racha actual' : 'Current streak';
   String get bestStreak => isSpanish ? 'Mejor racha' : 'Best streak';
   String get winRate => isSpanish ? 'Tasa de victoria' : 'Win rate';
+  String get coins => isSpanish ? 'Monedas' : 'Coins';
+  String get shop => isSpanish ? 'Tienda' : 'Shop';
+  String get shopSubtitle => isSpanish
+      ? 'Gasta tus monedas en avatares'
+      : 'Spend your coins on avatars';
+  String get avatars => isSpanish ? 'Avatares' : 'Avatars';
+  String get buy => isSpanish ? 'Comprar' : 'Buy';
+  String get equip => isSpanish ? 'Equipar' : 'Equip';
+  String get equipped => isSpanish ? 'Equipado' : 'Equipped';
+  String get owned => isSpanish ? 'Adquirido' : 'Owned';
+  String get notEnoughCoins => isSpanish
+      ? 'No tienes suficientes monedas'
+      : 'Not enough coins';
+  String avatarPurchased(String name) =>
+      isSpanish ? '¡$name desbloqueado!' : '$name unlocked!';
+  String avatarName(String id) {
+    switch (id) {
+      case 'avatar_default':
+        return isSpanish ? 'Clásico' : 'Classic';
+      case 'avatar_rocket':
+        return isSpanish ? 'Cohete' : 'Rocket';
+      case 'avatar_star':
+        return isSpanish ? 'Estrella' : 'Star';
+      case 'avatar_flame':
+        return isSpanish ? 'Llama' : 'Flame';
+      case 'avatar_palette':
+        return isSpanish ? 'Artista' : 'Artist';
+      case 'avatar_martial':
+        return isSpanish ? 'Guerrero' : 'Warrior';
+      case 'avatar_crown':
+        return isSpanish ? 'Corona' : 'Crown';
+      case 'avatar_diamond':
+        return isSpanish ? 'Diamante' : 'Diamond';
+      default:
+        return id;
+    }
+  }
+
+  String lockedUntilLevel(int level) => isSpanish
+      ? 'Se desbloquea en el nivel $level'
+      : 'Unlocks at level $level';
+  String get locked => isSpanish ? 'Bloqueado' : 'Locked';
   String get changeName => isSpanish ? 'Cambiar nombre' : 'Change name';
   String get yourName => isSpanish ? 'Tu nombre' : 'Your name';
   String get cancel => isSpanish ? 'Cancelar' : 'Cancel';
@@ -181,6 +223,19 @@ class AppStrings {
   String colorMatchGameTitle(int round) =>
       '${gameName('color_match')} - ${roundLabel(round)}';
 
+  String goalLabel(int value) =>
+      isSpanish ? 'Meta: $value' : 'Goal: $value';
+  String bestTileLabel(int value) =>
+      isSpanish ? 'Mejor: $value' : 'Best: $value';
+  String get game2048Hint => isSpanish
+      ? 'Desliza para unir números iguales'
+      : 'Swipe to merge equal numbers';
+  String minesLabel(int remaining) =>
+      isSpanish ? 'Minas: $remaining' : 'Mines: $remaining';
+  String get minesweeperHint => isSpanish
+      ? 'Toca para revelar, mantén pulsado para marcar'
+      : 'Tap to reveal, long-press to flag';
+
   String difficultyLabel(String value) {
     switch (value) {
       case 'Fácil':
@@ -231,6 +286,10 @@ class AppStrings {
         return 'Sudoku';
       case 'color_match':
         return 'Color Match';
+      case '2048':
+        return '2048';
+      case 'minesweeper':
+        return isSpanish ? 'Buscaminas' : 'Minesweeper';
       default:
         return id;
     }
@@ -250,6 +309,10 @@ class AppStrings {
         return isSpanish ? 'Completa la cuadrícula numérica' : 'Complete the number grid';
       case 'color_match':
         return isSpanish ? 'Acierta el color correcto' : 'Pick the correct color';
+      case '2048':
+        return isSpanish ? 'Une los números y llega a 2048' : 'Merge numbers and reach 2048';
+      case 'minesweeper':
+        return isSpanish ? 'Despeja el campo sin pisar minas' : 'Clear the field without mines';
       default:
         return id;
     }
@@ -267,6 +330,10 @@ class AppStrings {
         return isSpanish ? 'Lógica' : 'Logic';
       case 'color_match':
         return isSpanish ? 'Reflejos' : 'Reflexes';
+      case '2048':
+        return isSpanish ? 'Números' : 'Numbers';
+      case 'minesweeper':
+        return isSpanish ? 'Lógica' : 'Logic';
       default:
         return '';
     }

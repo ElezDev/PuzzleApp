@@ -20,9 +20,24 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        'ALTER TABLE user_profile ADD COLUMN coins INTEGER NOT NULL DEFAULT 0',
+      );
+      await db.execute('''
+        CREATE TABLE purchases (
+          item_id TEXT PRIMARY KEY,
+          purchased_at TEXT NOT NULL
+        )
+      ''');
+    }
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -32,6 +47,7 @@ class DatabaseHelper {
         username TEXT NOT NULL DEFAULT 'Jugador',
         total_xp INTEGER NOT NULL DEFAULT 0,
         level INTEGER NOT NULL DEFAULT 1,
+        coins INTEGER NOT NULL DEFAULT 0,
         games_played INTEGER NOT NULL DEFAULT 0,
         games_won INTEGER NOT NULL DEFAULT 0,
         current_streak INTEGER NOT NULL DEFAULT 0,
@@ -69,6 +85,13 @@ class DatabaseHelper {
       CREATE TABLE settings (
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE purchases (
+        item_id TEXT PRIMARY KEY,
+        purchased_at TEXT NOT NULL
       )
     ''');
 
@@ -121,6 +144,43 @@ class DatabaseHelper {
       'level': level,
       'updated_at': DateTime.now().toIso8601String(),
     });
+  }
+
+  Future<void> addCoins(int coins) async {
+    if (coins == 0) return;
+    final db = await database;
+    final profile = await getProfile();
+    final total = ((profile['coins'] as int?) ?? 0) + coins;
+    await db.update('user_profile', {
+      'coins': total < 0 ? 0 : total,
+      'updated_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<bool> spendCoins(int coins) async {
+    final profile = await getProfile();
+    final total = (profile['coins'] as int?) ?? 0;
+    if (total < coins) return false;
+    await addCoins(-coins);
+    return true;
+  }
+
+  Future<void> recordPurchase(String itemId) async {
+    final db = await database;
+    await db.insert(
+      'purchases',
+      {
+        'item_id': itemId,
+        'purchased_at': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+  }
+
+  Future<List<String>> getPurchases() async {
+    final db = await database;
+    final results = await db.query('purchases');
+    return results.map((row) => row['item_id'] as String).toList();
   }
 
   int _calculateLevel(int xp) {
@@ -208,6 +268,10 @@ class DatabaseHelper {
     // Award XP
     final xp = won ? (score * 0.5 + 20).toInt() : 5;
     await addXp(xp);
+
+    // Award coins
+    final coins = won ? (8 + score ~/ 25) : 2;
+    await addCoins(coins);
   }
 
   Future<List<Map<String, dynamic>>> getStatsForGame(String gameType) async {

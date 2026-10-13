@@ -12,6 +12,8 @@ import 'games/slide_puzzle_screen.dart';
 import 'games/pattern_screen.dart';
 import 'games/sudoku_screen.dart';
 import 'games/color_match_screen.dart';
+import 'games/game_2048_screen.dart';
+import 'games/minesweeper_screen.dart';
 
 class DailyChallengeScreen extends StatefulWidget {
   const DailyChallengeScreen({super.key});
@@ -36,11 +38,16 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
   }
 
   void _generateDailyChallenge() {
+    // Only pick from games the player has unlocked.
+    final level = context.read<AppProvider>().level;
+    final available =
+        GameInfo.allGames.where((g) => g.requiredLevel <= level).toList();
+
     // Use date as seed for consistent daily challenge
     final seed = _todayDate.hashCode;
     final rand = Random(seed);
-    final gameIdx = rand.nextInt(GameInfo.allGames.length);
-    _todayGame = GameInfo.allGames[gameIdx];
+    final gameIdx = rand.nextInt(available.length);
+    _todayGame = available[gameIdx];
 
     final difficulties = ['Fácil', 'Medio', 'Difícil'];
     _todayDifficulty = difficulties[rand.nextInt(3)];
@@ -80,6 +87,10 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
         screen = const SudokuScreen();
       case 'color_match':
         screen = const ColorMatchScreen();
+      case '2048':
+        screen = const Game2048Screen();
+      case 'minesweeper':
+        screen = const MinesweeperScreen();
       default:
         return;
     }

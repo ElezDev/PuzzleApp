@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/database_helper.dart';
 import '../core/sound_manager.dart';
+import '../models/shop_item.dart';
 
 class AppProvider extends ChangeNotifier {
   final DatabaseHelper _db = DatabaseHelper();
@@ -12,6 +13,8 @@ class AppProvider extends ChangeNotifier {
   bool _hapticEnabled = true;
   String _languageCode = 'system';
   Map<String, dynamic> _profile = {};
+  List<String> _purchases = [];
+  String _equippedAvatar = ShopItem.defaultAvatar.id;
   bool _isLoaded = false;
 
   bool get isDarkMode => _isDarkMode;
@@ -24,14 +27,23 @@ class AppProvider extends ChangeNotifier {
   bool get isLoaded => _isLoaded;
   DatabaseHelper get db => _db;
   SoundManager get sound => _sound;
+  List<String> get purchases => List.unmodifiable(_purchases);
 
   int get level => (_profile['level'] as int?) ?? 1;
   int get totalXp => (_profile['total_xp'] as int?) ?? 0;
+  int get coins => (_profile['coins'] as int?) ?? 0;
   int get gamesPlayed => (_profile['games_played'] as int?) ?? 0;
   int get gamesWon => (_profile['games_won'] as int?) ?? 0;
   int get currentStreak => (_profile['current_streak'] as int?) ?? 0;
   int get bestStreak => (_profile['best_streak'] as int?) ?? 0;
   String get username => (_profile['username'] as String?) ?? 'Jugador';
+
+  ShopItem get equippedAvatar => ShopItem.byId(_equippedAvatar);
+
+  bool isPurchased(String itemId) =>
+      itemId == ShopItem.defaultAvatar.id || _purchases.contains(itemId);
+
+  bool isEquipped(String itemId) => _equippedAvatar == itemId;
 
   double get levelProgress {
     final current = _db.xpInCurrentLevel(totalXp);
@@ -60,6 +72,13 @@ class AppProvider extends ChangeNotifier {
         : languageCode;
 
     _profile = await _db.getProfile();
+    _purchases = await _db.getPurchases();
+
+    final avatar = await _db.getSetting('equipped_avatar');
+    _equippedAvatar = (avatar == null || avatar.isEmpty)
+        ? ShopItem.defaultAvatar.id
+        : avatar;
+
     _isLoaded = true;
     notifyListeners();
   }
@@ -122,6 +141,24 @@ class AppProvider extends ChangeNotifier {
   Future<void> updateUsername(String name) async {
     await _db.updateProfile({'username': name});
     _profile = await _db.getProfile();
+    notifyListeners();
+  }
+
+  Future<bool> purchaseItem(ShopItem item) async {
+    if (isPurchased(item.id)) return true;
+    final success = await _db.spendCoins(item.price);
+    if (!success) return false;
+    await _db.recordPurchase(item.id);
+    _profile = await _db.getProfile();
+    _purchases = await _db.getPurchases();
+    notifyListeners();
+    return true;
+  }
+
+  Future<void> equipAvatar(String itemId) async {
+    if (!isPurchased(itemId)) return;
+    _equippedAvatar = itemId;
+    await _db.setSetting('equipped_avatar', itemId);
     notifyListeners();
   }
 }

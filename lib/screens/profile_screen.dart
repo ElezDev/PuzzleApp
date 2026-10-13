@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../core/app_theme.dart';
 import '../l10n/app_strings.dart';
+import 'shop_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -12,6 +13,7 @@ class ProfileScreen extends StatelessWidget {
     final provider = context.watch<AppProvider>();
     final theme = Theme.of(context);
     final strings = AppStrings.of(context);
+    final avatar = provider.equippedAvatar;
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -25,28 +27,23 @@ class ProfileScreen extends StatelessWidget {
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.primaryLight, AppTheme.accent],
+                gradient: LinearGradient(
+                  colors: [avatar.color, avatar.gradientEnd],
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryLight.withValues(alpha: 0.3),
+                    color: avatar.color.withValues(alpha: 0.3),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
                 ],
               ),
               child: Center(
-                child: Text(
-                  provider.username.isNotEmpty
-                      ? provider.username[0].toUpperCase()
-                      : 'J',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
-                  ),
+                child: Icon(
+                  avatar.icon,
+                  color: Colors.white,
+                  size: 44,
                 ),
               ),
             ),
@@ -173,6 +170,13 @@ class ProfileScreen extends StatelessWidget {
               label: strings.winRate,
               color: AppTheme.primaryLight,
             ),
+            const SizedBox(height: 12),
+            _CoinsCard(
+              coins: provider.coins,
+              onOpenShop: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ShopScreen()),
+              ),
+            ),
           ],
         ),
       ),
@@ -252,19 +256,92 @@ class _StatCard extends StatelessWidget {
             child: Icon(icon, color: color, size: 22),
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  color: theme.textTheme.headlineSmall?.color,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    color: theme.textTheme.headlineSmall?.color,
+                  ),
                 ),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CoinsCard extends StatelessWidget {
+  final int coins;
+  final VoidCallback onOpenShop;
+
+  const _CoinsCard({required this.coins, required this.onOpenShop});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final strings = AppStrings.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.warning.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.monetization_on_rounded,
+                color: AppTheme.warning, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '$coins',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    color: theme.textTheme.headlineSmall?.color,
+                  ),
+                ),
+                Text(strings.coins, style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: onOpenShop,
+            icon: const Icon(Icons.storefront_rounded, size: 18),
+            label: Text(strings.shop),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
               ),
-              Text(label, style: theme.textTheme.bodySmall),
-            ],
+            ),
           ),
         ],
       ),
