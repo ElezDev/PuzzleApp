@@ -36,6 +36,7 @@ class ShopScreen extends StatelessWidget {
     if (!context.mounted) return;
     if (success) {
       await provider.equipAvatar(item.id);
+      provider.sound.playCoin();
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
