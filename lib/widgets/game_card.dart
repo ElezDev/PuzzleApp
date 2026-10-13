@@ -45,20 +45,23 @@ class GameCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(game.icon, color: Colors.white, size: 28),
+                    child: Icon(game.icon, color: Colors.white, size: 24),
                   ),
                   const Spacer(),
                   Text(
                     strings.gameName(game.id),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
-                      fontSize: 16,
+                      fontSize: 15,
+                      height: 1.1,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -69,10 +72,10 @@ class GameCard extends StatelessWidget {
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(

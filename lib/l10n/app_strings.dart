@@ -263,6 +263,15 @@ class AppStrings {
       ? 'Toca para revelar, mantén pulsado para marcar'
       : 'Tap to reveal, long-press to flag';
 
+  String attemptsLeft(int attempts) =>
+      isSpanish ? 'Intentos: $attempts' : 'Tries: $attempts';
+  String get pickLetter => isSpanish ? 'Elige una letra' : 'Pick a letter';
+  String get hangmanHint => isSpanish
+      ? 'Adivina la palabra letra a letra'
+      : 'Guess the word letter by letter';
+  String wordWas(String word) =>
+      isSpanish ? 'La palabra era: $word' : 'The word was: $word';
+
   String difficultyLabel(String value) {
     switch (value) {
       case 'Fácil':
@@ -319,6 +328,8 @@ class AppStrings {
         return isSpanish ? 'Buscaminas' : 'Minesweeper';
       case 'breakout':
         return 'Breakout';
+      case 'hangman':
+        return isSpanish ? 'Adivina la palabra' : 'Guess the Word';
       case 'tetris':
         return 'Tetris';
       default:
@@ -348,6 +359,10 @@ class AppStrings {
         return isSpanish
             ? 'Rompe los bloques, la pelota acelera'
             : 'Break the blocks, the ball speeds up';
+      case 'hangman':
+        return isSpanish
+            ? 'Adivina la palabra letra a letra'
+            : 'Guess the word letter by letter';
       case 'tetris':
         return isSpanish
             ? 'Completa líneas mientras todo cae más rápido'
@@ -375,6 +390,8 @@ class AppStrings {
         return isSpanish ? 'Lógica' : 'Logic';
       case 'breakout':
         return isSpanish ? 'Arcade' : 'Arcade';
+      case 'hangman':
+        return isSpanish ? 'Palabras' : 'Words';
       case 'tetris':
         return isSpanish ? 'Arcade Pro' : 'Arcade Pro';
       default:

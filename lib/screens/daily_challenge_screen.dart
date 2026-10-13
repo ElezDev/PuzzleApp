@@ -16,6 +16,7 @@ import 'games/color_match_screen.dart';
 import 'games/game_2048_screen.dart';
 import 'games/minesweeper_screen.dart';
 import 'games/breakout_screen.dart';
+import 'games/hangman_screen.dart';
 import 'games/tetris_screen.dart';
 
 class DailyChallengeScreen extends StatefulWidget {
@@ -96,6 +97,8 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
         screen = MinesweeperScreen(initialDifficulty: _todayDifficulty);
       case 'breakout':
         screen = BreakoutScreen(initialDifficulty: _todayDifficulty);
+      case 'hangman':
+        screen = HangmanScreen(initialDifficulty: _todayDifficulty);
       case 'tetris':
         screen = TetrisScreen(initialDifficulty: _todayDifficulty);
       default:

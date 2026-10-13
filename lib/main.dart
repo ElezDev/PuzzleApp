@@ -36,6 +36,7 @@ class PuzlessApp extends StatelessWidget {
 
     return MaterialApp(
       onGenerateTitle: (context) => AppStrings.of(context).appTitle,
+      scaffoldMessengerKey: AppProvider.messengerKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

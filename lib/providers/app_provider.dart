@@ -8,6 +8,9 @@ import '../models/game_info.dart';
 class AppProvider extends ChangeNotifier {
   static const String globalBackgroundSlot = 'global';
 
+  static final GlobalKey<ScaffoldMessengerState> messengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   final DatabaseHelper _db = DatabaseHelper();
   final SoundManager _sound = SoundManager();
 
@@ -175,6 +178,7 @@ class AppProvider extends ChangeNotifier {
     int? timeSeconds,
     required bool won,
   }) async {
+    final previousLevel = level;
     await _db.recordGame(
       gameType: gameType,
       difficulty: difficulty,
@@ -183,7 +187,26 @@ class AppProvider extends ChangeNotifier {
       won: won,
     );
     _profile = await _db.getProfile();
+    if (level > previousLevel) _showLevelUpBanner(level, previousLevel);
     notifyListeners();
+  }
+
+  void _showLevelUpBanner(int newLevel, int previousLevel) {
+    final locale = _languageCode == 'system'
+        ? WidgetsBinding.instance.platformDispatcher.locale
+        : Locale(_languageCode);
+    final isSpanish = locale.languageCode != 'en';
+    final bonus = (newLevel - previousLevel) * 5;
+    final message = isSpanish
+        ? '¡Subiste al nivel $newLevel! +$bonus monedas'
+        : 'Level up! You reached level $newLevel. +$bonus coins';
+    messengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   Future<void> refreshProfile() async {

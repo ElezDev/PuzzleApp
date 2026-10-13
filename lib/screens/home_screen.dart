@@ -16,6 +16,7 @@ import 'games/color_match_screen.dart';
 import 'games/game_2048_screen.dart';
 import 'games/minesweeper_screen.dart';
 import 'games/breakout_screen.dart';
+import 'games/hangman_screen.dart';
 import 'games/tetris_screen.dart';
 import 'daily_challenge_screen.dart';
 
@@ -56,6 +57,8 @@ class HomeScreen extends StatelessWidget {
         screen = const MinesweeperScreen();
       case 'breakout':
         screen = const BreakoutScreen();
+      case 'hangman':
+        screen = const HangmanScreen();
       case 'tetris':
         screen = const TetrisScreen();
       default:
@@ -335,7 +338,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 14,
                 crossAxisSpacing: 14,
-                childAspectRatio: 0.85,
+                childAspectRatio: 0.76,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {

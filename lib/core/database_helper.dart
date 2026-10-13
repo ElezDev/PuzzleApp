@@ -246,6 +246,7 @@ class DatabaseHelper {
     });
 
     final profile = await getProfile();
+    final previousLevel = (profile['level'] as int?) ?? 1;
     final gamesPlayed = (profile['games_played'] as int) + 1;
     final gamesWon = (profile['games_won'] as int) + (won ? 1 : 0);
     int currentStreak = profile['current_streak'] as int;
@@ -269,8 +270,13 @@ class DatabaseHelper {
     final xp = won ? (score * 0.5 + 20).toInt() : 5;
     await addXp(xp);
 
-    // Award coins
-    final coins = won ? (8 + score ~/ 25) : 2;
+    // Award coins, plus a 5-coin bonus for each level gained.
+    final updated = await getProfile();
+    final newLevel = (updated['level'] as int?) ?? previousLevel;
+    int coins = won ? (8 + score ~/ 25) : 2;
+    if (newLevel > previousLevel) {
+      coins += (newLevel - previousLevel) * 5;
+    }
     await addCoins(coins);
   }
 
