@@ -90,6 +90,16 @@ class GameInfo {
       requiredLevel: 3,
     ),
     GameInfo(
+      id: 'breakout',
+      name: 'Breakout',
+      description: 'Rompe los bloques, la pelota acelera',
+      icon: Icons.sports_baseball_rounded,
+      color: Color(0xFFFF5252),
+      gradientEnd: Color(0xFFFF7B7B),
+      category: 'Arcade',
+      requiredLevel: 1,
+    ),
+    GameInfo(
       id: 'minesweeper',
       name: 'Buscaminas',
       description: 'Despeja el campo sin pisar minas',
@@ -98,6 +108,16 @@ class GameInfo {
       gradientEnd: Color(0xFF4A6572),
       category: 'Lógica',
       requiredLevel: 6,
+    ),
+    GameInfo(
+      id: 'tetris',
+      name: 'Tetris',
+      description: 'Completa líneas mientras todo cae más rápido',
+      icon: Icons.view_module_rounded,
+      color: Color(0xFF00BCD4),
+      gradientEnd: Color(0xFF4DD0E1),
+      category: 'Arcade Pro',
+      requiredLevel: 1,
     ),
   ];
 }

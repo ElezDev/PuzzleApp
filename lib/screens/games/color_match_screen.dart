@@ -9,7 +9,9 @@ import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
 
 class ColorMatchScreen extends StatefulWidget {
-  const ColorMatchScreen({super.key});
+  const ColorMatchScreen({super.key, this.initialDifficulty});
+
+  final String? initialDifficulty;
 
   @override
   State<ColorMatchScreen> createState() => _ColorMatchScreenState();
@@ -77,6 +79,7 @@ class _ColorMatchScreenState extends State<ColorMatchScreen>
   @override
   void initState() {
     super.initState();
+    _difficulty = widget.initialDifficulty ?? _difficulty;
     _shakeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),

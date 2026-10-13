@@ -11,12 +11,18 @@ class SoundManager {
   static const int _poolSize = 4;
   final List<AudioPlayer> _pool = [];
   int _poolIndex = 0;
+  final AudioPlayer _musicPlayer = AudioPlayer();
 
   bool _soundEnabled = true;
   bool _hapticEnabled = true;
+  bool _musicEnabled = false;
+  String? _desiredMusic;
+  String? _currentMusic;
+  Future<void>? _musicTask;
 
   bool get soundEnabled => _soundEnabled;
   bool get hapticEnabled => _hapticEnabled;
+  bool get musicEnabled => _musicEnabled;
 
   void setSoundEnabled(bool enabled) => _soundEnabled = enabled;
   void setHapticEnabled(bool enabled) => _hapticEnabled = enabled;
@@ -28,6 +34,7 @@ class SoundManager {
       player.setPlayerMode(PlayerMode.lowLatency);
       _pool.add(player);
     }
+    _musicPlayer.setPlayerMode(PlayerMode.mediaPlayer);
   }
 
   Future<void> _play(String asset) async {
@@ -40,6 +47,68 @@ class SoundManager {
     } catch (_) {
       // Ignore playback errors (e.g. unsupported platform).
     }
+  }
+
+  void setMusicEnabled(bool enabled) {
+    _musicEnabled = enabled;
+    if (!enabled) {
+      _currentMusic = null;
+      _musicPlayer.stop();
+    } else if (_desiredMusic != null) {
+      _playMusic(_desiredMusic!);
+    }
+  }
+
+  Future<void> _playMusic(String asset) {
+    _desiredMusic = asset;
+    _musicTask = _musicTask?.then((_) => _playMusicNow(asset)) ??
+        _playMusicNow(asset);
+    return _musicTask!;
+  }
+
+  Future<void> _playMusicNow(String asset) async {
+    if (!_musicEnabled) return;
+    try {
+      if (_currentMusic == asset &&
+          _musicPlayer.state == PlayerState.playing) {
+        return;
+      }
+      await _musicPlayer.stop();
+      await _musicPlayer.setReleaseMode(ReleaseMode.loop);
+      await _musicPlayer.play(AssetSource('sounds/$asset'));
+      _currentMusic = asset;
+    } catch (_) {
+      // Ignore playback errors.
+    }
+  }
+
+  Future<void> pauseMusic() async {
+    try {
+      await _musicPlayer.pause();
+    } catch (_) {}
+  }
+
+  Future<void> resumeMusic() async {
+    if (!_musicEnabled || _currentMusic == null) return;
+    try {
+      await _musicPlayer.resume();
+    } catch (_) {}
+  }
+
+  Future<void> playMenuMusic() => _playMusic('music_menu.wav');
+
+  Future<void> playGameMusic(String gameId) {
+    final arcade = {'tetris', '2048', 'breakout'};
+    return _playMusic(
+      arcade.contains(gameId) ? 'music_arcade.wav' : 'music_game.wav',
+    );
+  }
+
+  Future<void> stopMusic() async {
+    _currentMusic = null;
+    try {
+      await _musicPlayer.stop();
+    } catch (_) {}
   }
 
   Future<void> playTap() async {
@@ -72,5 +141,6 @@ class SoundManager {
       player.dispose();
     }
     _pool.clear();
+    _musicPlayer.dispose();
   }
 }

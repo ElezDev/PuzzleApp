@@ -95,6 +95,7 @@ class AppProvider extends ChangeNotifier {
 
     final music = await _db.getSetting('music_enabled');
     _musicEnabled = music == 'true';
+    _sound.setMusicEnabled(_musicEnabled);
 
     final haptic = await _db.getSetting('haptic_enabled');
     _hapticEnabled = haptic != 'false';
@@ -148,6 +149,8 @@ class AppProvider extends ChangeNotifier {
 
   Future<void> toggleMusic() async {
     _musicEnabled = !_musicEnabled;
+    _sound.setMusicEnabled(_musicEnabled);
+    if (_musicEnabled) _sound.playMenuMusic();
     await _db.setSetting('music_enabled', _musicEnabled.toString());
     notifyListeners();
   }

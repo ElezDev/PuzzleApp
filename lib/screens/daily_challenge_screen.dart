@@ -15,6 +15,8 @@ import 'games/sudoku_screen.dart';
 import 'games/color_match_screen.dart';
 import 'games/game_2048_screen.dart';
 import 'games/minesweeper_screen.dart';
+import 'games/breakout_screen.dart';
+import 'games/tetris_screen.dart';
 
 class DailyChallengeScreen extends StatefulWidget {
   const DailyChallengeScreen({super.key});
@@ -77,29 +79,38 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
     Widget screen;
     switch (_todayGame.id) {
       case 'tic_tac_toe':
-        screen = const TicTacToeScreen();
+        screen = TicTacToeScreen(initialDifficulty: _todayDifficulty);
       case 'memory':
-        screen = const MemoryScreen();
+        screen = MemoryScreen(initialDifficulty: _todayDifficulty);
       case 'slide_puzzle':
-        screen = const SlidePuzzleScreen();
+        screen = SlidePuzzleScreen(initialDifficulty: _todayDifficulty);
       case 'pattern':
-        screen = const PatternScreen();
+        screen = PatternScreen(initialDifficulty: _todayDifficulty);
       case 'sudoku':
-        screen = const SudokuScreen();
+        screen = SudokuScreen(initialDifficulty: _todayDifficulty);
       case 'color_match':
-        screen = const ColorMatchScreen();
+        screen = ColorMatchScreen(initialDifficulty: _todayDifficulty);
       case '2048':
-        screen = const Game2048Screen();
+        screen = Game2048Screen(initialDifficulty: _todayDifficulty);
       case 'minesweeper':
-        screen = const MinesweeperScreen();
+        screen = MinesweeperScreen(initialDifficulty: _todayDifficulty);
+      case 'breakout':
+        screen = BreakoutScreen(initialDifficulty: _todayDifficulty);
+      case 'tetris':
+        screen = TetrisScreen(initialDifficulty: _todayDifficulty);
       default:
         return;
     }
 
     screen = GameBackground(slot: _todayGame.id, child: screen);
+    context.read<AppProvider>().sound.playGameMusic(_todayGame.id);
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => screen))
-        .then((_) => _loadChallenge());
+        .then((_) {
+      if (!mounted) return;
+      context.read<AppProvider>().sound.playMenuMusic();
+      _loadChallenge();
+    });
   }
 
   @override

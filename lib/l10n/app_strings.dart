@@ -317,6 +317,10 @@ class AppStrings {
         return '2048';
       case 'minesweeper':
         return isSpanish ? 'Buscaminas' : 'Minesweeper';
+      case 'breakout':
+        return 'Breakout';
+      case 'tetris':
+        return 'Tetris';
       default:
         return id;
     }
@@ -340,6 +344,14 @@ class AppStrings {
         return isSpanish ? 'Une los números y llega a 2048' : 'Merge numbers and reach 2048';
       case 'minesweeper':
         return isSpanish ? 'Despeja el campo sin pisar minas' : 'Clear the field without mines';
+      case 'breakout':
+        return isSpanish
+            ? 'Rompe los bloques, la pelota acelera'
+            : 'Break the blocks, the ball speeds up';
+      case 'tetris':
+        return isSpanish
+            ? 'Completa líneas mientras todo cae más rápido'
+            : 'Clear lines as the pieces fall faster';
       default:
         return id;
     }
@@ -361,6 +373,10 @@ class AppStrings {
         return isSpanish ? 'Números' : 'Numbers';
       case 'minesweeper':
         return isSpanish ? 'Lógica' : 'Logic';
+      case 'breakout':
+        return isSpanish ? 'Arcade' : 'Arcade';
+      case 'tetris':
+        return isSpanish ? 'Arcade Pro' : 'Arcade Pro';
       default:
         return '';
     }

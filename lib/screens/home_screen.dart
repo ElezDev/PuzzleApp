@@ -15,6 +15,8 @@ import 'games/sudoku_screen.dart';
 import 'games/color_match_screen.dart';
 import 'games/game_2048_screen.dart';
 import 'games/minesweeper_screen.dart';
+import 'games/breakout_screen.dart';
+import 'games/tetris_screen.dart';
 import 'daily_challenge_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -52,28 +54,37 @@ class HomeScreen extends StatelessWidget {
         screen = const Game2048Screen();
       case 'minesweeper':
         screen = const MinesweeperScreen();
+      case 'breakout':
+        screen = const BreakoutScreen();
+      case 'tetris':
+        screen = const TetrisScreen();
       default:
         return;
     }
     screen = GameBackground(slot: game.id, child: screen);
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (_, _, _) => screen,
-        transitionsBuilder: (_, a, _, child) {
-          return FadeTransition(
-            opacity: CurvedAnimation(parent: a, curve: Curves.easeInOut),
-            child: SlideTransition(
-              position: Tween(
-                begin: const Offset(0, 0.05),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
-              child: child,
-            ),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 350),
-      ),
-    );
+    provider.sound.playGameMusic(game.id);
+    Navigator.of(context)
+        .push(
+          PageRouteBuilder(
+            pageBuilder: (_, _, _) => screen,
+            transitionsBuilder: (_, a, _, child) {
+              return FadeTransition(
+                opacity: CurvedAnimation(parent: a, curve: Curves.easeInOut),
+                child: SlideTransition(
+                  position: Tween(
+                    begin: const Offset(0, 0.05),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: a, curve: Curves.easeOutCubic),
+                  ),
+                  child: child,
+                ),
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 350),
+          ),
+        )
+        .then((_) => provider.sound.playMenuMusic());
   }
 
   @override

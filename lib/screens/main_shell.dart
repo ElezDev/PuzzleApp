@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../l10n/app_strings.dart';
+import '../providers/app_provider.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
@@ -11,7 +13,7 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   int _currentIndex = 0;
 
   final _screens = const [
@@ -19,6 +21,33 @@ class _MainShellState extends State<MainShell> {
     ProfileScreen(),
     SettingsScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<AppProvider>().sound.playMenuMusic();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final sound = context.read<AppProvider>().sound;
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      sound.pauseMusic();
+    } else if (state == AppLifecycleState.resumed) {
+      sound.resumeMusic();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,9 @@ import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
 
 class MinesweeperScreen extends StatefulWidget {
-  const MinesweeperScreen({super.key});
+  const MinesweeperScreen({super.key, this.initialDifficulty});
+
+  final String? initialDifficulty;
 
   @override
   State<MinesweeperScreen> createState() => _MinesweeperScreenState();
@@ -42,6 +44,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
   @override
   void initState() {
     super.initState();
+    _difficulty = widget.initialDifficulty ?? _difficulty;
     _startGame();
   }
 

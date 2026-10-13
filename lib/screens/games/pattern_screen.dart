@@ -9,7 +9,9 @@ import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
 
 class PatternScreen extends StatefulWidget {
-  const PatternScreen({super.key});
+  const PatternScreen({super.key, this.initialDifficulty});
+
+  final String? initialDifficulty;
 
   @override
   State<PatternScreen> createState() => _PatternScreenState();
@@ -63,6 +65,7 @@ class _PatternScreenState extends State<PatternScreen> {
   @override
   void initState() {
     super.initState();
+    _difficulty = widget.initialDifficulty ?? _difficulty;
     _startGame();
   }
 

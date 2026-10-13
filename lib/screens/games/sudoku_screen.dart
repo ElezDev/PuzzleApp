@@ -9,7 +9,9 @@ import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
 
 class SudokuScreen extends StatefulWidget {
-  const SudokuScreen({super.key});
+  const SudokuScreen({super.key, this.initialDifficulty});
+
+  final String? initialDifficulty;
 
   @override
   State<SudokuScreen> createState() => _SudokuScreenState();
@@ -32,6 +34,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   @override
   void initState() {
     super.initState();
+    _difficulty = widget.initialDifficulty ?? _difficulty;
     _startGame();
   }
 

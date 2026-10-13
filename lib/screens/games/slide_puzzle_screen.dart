@@ -9,7 +9,9 @@ import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
 
 class SlidePuzzleScreen extends StatefulWidget {
-  const SlidePuzzleScreen({super.key});
+  const SlidePuzzleScreen({super.key, this.initialDifficulty});
+
+  final String? initialDifficulty;
 
   @override
   State<SlidePuzzleScreen> createState() => _SlidePuzzleScreenState();
@@ -28,6 +30,7 @@ class _SlidePuzzleScreenState extends State<SlidePuzzleScreen> {
   @override
   void initState() {
     super.initState();
+    _difficulty = widget.initialDifficulty ?? _difficulty;
     _startGame();
   }
 

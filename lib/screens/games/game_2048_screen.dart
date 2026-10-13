@@ -9,7 +9,9 @@ import '../../widgets/difficulty_selector.dart';
 import '../../widgets/game_result_dialog.dart';
 
 class Game2048Screen extends StatefulWidget {
-  const Game2048Screen({super.key});
+  const Game2048Screen({super.key, this.initialDifficulty});
+
+  final String? initialDifficulty;
 
   @override
   State<Game2048Screen> createState() => _Game2048ScreenState();
@@ -40,6 +42,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   @override
   void initState() {
     super.initState();
+    _difficulty = widget.initialDifficulty ?? _difficulty;
     _startGame();
   }
 
