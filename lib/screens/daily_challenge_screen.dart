@@ -6,6 +6,7 @@ import '../core/app_theme.dart';
 import '../providers/app_provider.dart';
 import '../models/game_info.dart';
 import '../l10n/app_strings.dart';
+import '../widgets/game_background.dart';
 import 'games/tic_tac_toe_screen.dart';
 import 'games/memory_screen.dart';
 import 'games/slide_puzzle_screen.dart';
@@ -95,6 +96,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
         return;
     }
 
+    screen = GameBackground(slot: _todayGame.id, child: screen);
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => screen))
         .then((_) => _loadChallenge());

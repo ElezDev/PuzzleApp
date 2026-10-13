@@ -5,6 +5,7 @@ import '../providers/app_provider.dart';
 import '../models/game_info.dart';
 import '../l10n/app_strings.dart';
 import '../widgets/game_card.dart';
+import '../widgets/game_background.dart';
 import '../core/app_theme.dart';
 import 'games/tic_tac_toe_screen.dart';
 import 'games/memory_screen.dart';
@@ -54,6 +55,7 @@ class HomeScreen extends StatelessWidget {
       default:
         return;
     }
+    screen = GameBackground(slot: game.id, child: screen);
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (_, _, _) => screen,

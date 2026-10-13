@@ -27,7 +27,7 @@ class PuzlessApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
-    final background = provider.equippedBackground;
+    final background = provider.globalBackground;
     final colors = provider.isDarkMode
         ? background.darkColors
         : background.lightColors;

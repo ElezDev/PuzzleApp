@@ -4,10 +4,18 @@ import '../core/app_theme.dart';
 import '../l10n/app_strings.dart';
 import '../models/shop_item.dart';
 import '../models/app_background.dart';
+import '../models/game_info.dart';
 import '../providers/app_provider.dart';
 
-class ShopScreen extends StatelessWidget {
+class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
+
+  @override
+  State<ShopScreen> createState() => _ShopScreenState();
+}
+
+class _ShopScreenState extends State<ShopScreen> {
+  String _selectedSlot = AppProvider.globalBackgroundSlot;
 
   Future<void> _purchaseAndEquip({
     required BuildContext context,
@@ -52,11 +60,25 @@ class ShopScreen extends StatelessWidget {
     }
   }
 
+  String _slotLabel(AppStrings strings, String slot) {
+    if (slot == AppProvider.globalBackgroundSlot) return strings.general;
+    return strings.gameName(slot);
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final theme = Theme.of(context);
     final strings = AppStrings.of(context);
+
+    final slots = [
+      AppProvider.globalBackgroundSlot,
+      ...GameInfo.allGames
+          .where((g) => provider.level >= g.requiredLevel)
+          .map((g) => g.id),
+    ];
+
+    final currentBackground = provider.backgroundFor(_selectedSlot);
 
     return Scaffold(
       appBar: AppBar(
@@ -121,7 +143,7 @@ class ShopScreen extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final item = ShopItem.avatars[index];
-                    return _ShopCard(
+                    return _AvatarCard(
                       item: item,
                       purchased: provider.isPurchased(item.id),
                       equipped: provider.isEquipped(item.id),
@@ -144,13 +166,77 @@ class ShopScreen extends StatelessWidget {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
                 child: Text(strings.backgrounds,
                     style: theme.textTheme.titleMedium),
               ),
             ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 6),
+                child: Text(strings.forScreen,
+                    style: theme.textTheme.bodySmall),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 40,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: slots.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
+                  itemBuilder: (context, index) {
+                    final slot = slots[index];
+                    final selected = slot == _selectedSlot;
+                    return ChoiceChip(
+                      label: Text(_slotLabel(strings, slot)),
+                      selected: selected,
+                      onSelected: (_) => setState(() => _selectedSlot = slot),
+                      selectedColor: theme.colorScheme.primary,
+                      labelStyle: TextStyle(
+                        color: selected ? Colors.white : null,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide.none,
+                    );
+                  },
+                ),
+              ),
+            ),
+            if (_selectedSlot != AppProvider.globalBackgroundSlot)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.layers_rounded,
+                          size: 16, color: AppTheme.primaryLight),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          currentBackground == null
+                              ? strings.inherited
+                              : strings.backgroundName(currentBackground.id),
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () =>
+                            provider.equipBackground(_selectedSlot, null),
+                        icon: const Icon(Icons.restart_alt_rounded, size: 16),
+                        label: Text(strings.useGeneralBackground),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -161,11 +247,15 @@ class ShopScreen extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final item = AppBackground.all[index];
+                    final equipped = provider.isBackgroundEquipped(
+                        _selectedSlot, item.id);
+                    final inherited = provider.isBackgroundInherited(
+                        _selectedSlot, item.id);
                     return _BackgroundCard(
                       item: item,
                       isDark: provider.isDarkMode,
-                      purchased: provider.isPurchased(item.id),
-                      equipped: provider.isBackgroundEquipped(item.id),
+                      equipped: equipped,
+                      inherited: inherited,
                       onTap: () => _purchaseAndEquip(
                         context: context,
                         provider: provider,
@@ -173,8 +263,9 @@ class ShopScreen extends StatelessWidget {
                         price: item.price,
                         name: strings.backgroundName(item.id),
                         purchased: provider.isPurchased(item.id),
-                        equipped: provider.isBackgroundEquipped(item.id),
-                        equip: () => provider.equipBackground(item.id),
+                        equipped: equipped,
+                        equip: () =>
+                            provider.equipBackground(_selectedSlot, item.id),
                       ),
                     );
                   },
@@ -190,14 +281,14 @@ class ShopScreen extends StatelessWidget {
   }
 }
 
-class _ShopCard extends StatelessWidget {
+class _AvatarCard extends StatelessWidget {
   final ShopItem item;
   final bool purchased;
   final bool equipped;
   final bool affordable;
   final VoidCallback onTap;
 
-  const _ShopCard({
+  const _AvatarCard({
     required this.item,
     required this.purchased,
     required this.equipped,
@@ -263,15 +354,15 @@ class _ShopCard extends StatelessWidget {
 class _BackgroundCard extends StatelessWidget {
   final AppBackground item;
   final bool isDark;
-  final bool purchased;
   final bool equipped;
+  final bool inherited;
   final VoidCallback onTap;
 
   const _BackgroundCard({
     required this.item,
     required this.isDark,
-    required this.purchased,
     required this.equipped,
+    required this.inherited,
     required this.onTap,
   });
 
@@ -281,6 +372,10 @@ class _BackgroundCard extends StatelessWidget {
     final strings = AppStrings.of(context);
     final colors = isDark ? item.darkColors : item.lightColors;
 
+    final borderColor = equipped
+        ? AppTheme.success
+        : (inherited ? AppTheme.primaryLight : Colors.transparent);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -288,9 +383,7 @@ class _BackgroundCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
-          border: equipped
-              ? Border.all(color: AppTheme.success, width: 2)
-              : Border.all(color: Colors.transparent, width: 2),
+          border: Border.all(color: borderColor, width: 2),
         ),
         child: Column(
           children: [
@@ -308,10 +401,24 @@ class _BackgroundCard extends StatelessWidget {
                     color: theme.colorScheme.primary.withValues(alpha: 0.12),
                   ),
                 ),
-                child: equipped
-                    ? const Center(
-                        child: Icon(Icons.check_circle_rounded,
-                            color: AppTheme.success, size: 26),
+                child: (equipped || inherited)
+                    ? Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.35),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            equipped ? strings.equipped : strings.inherited,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
                       )
                     : null,
               ),
@@ -325,7 +432,7 @@ class _BackgroundCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             _ActionButton(
-              purchased: purchased,
+              purchased: true,
               equipped: equipped,
               affordable: true,
               price: item.price,

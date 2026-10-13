@@ -3,8 +3,11 @@ import '../core/database_helper.dart';
 import '../core/sound_manager.dart';
 import '../models/shop_item.dart';
 import '../models/app_background.dart';
+import '../models/game_info.dart';
 
 class AppProvider extends ChangeNotifier {
+  static const String globalBackgroundSlot = 'global';
+
   final DatabaseHelper _db = DatabaseHelper();
   final SoundManager _sound = SoundManager();
 
@@ -16,7 +19,7 @@ class AppProvider extends ChangeNotifier {
   Map<String, dynamic> _profile = {};
   List<String> _purchases = [];
   String _equippedAvatar = ShopItem.defaultAvatar.id;
-  String _equippedBackground = AppBackground.defaultBackground.id;
+  final Map<String, String> _backgrounds = {};
   bool _isLoaded = false;
 
   bool get isDarkMode => _isDarkMode;
@@ -42,8 +45,24 @@ class AppProvider extends ChangeNotifier {
 
   ShopItem get equippedAvatar => ShopItem.byId(_equippedAvatar);
 
-  AppBackground get equippedBackground =>
-      AppBackground.byId(_equippedBackground);
+  /// The background used across the whole app (fallback for every screen).
+  AppBackground get globalBackground => AppBackground.byId(
+        _backgrounds[globalBackgroundSlot] ??
+            AppBackground.defaultBackground.id,
+      );
+
+  /// The background equipped specifically for [slot], or null when the slot
+  /// should fall back to the global background.
+  AppBackground? backgroundFor(String slot) {
+    if (slot == globalBackgroundSlot) return globalBackground;
+    final id = _backgrounds[slot];
+    return id == null ? null : AppBackground.byId(id);
+  }
+
+  String resolvedBackgroundId(String slot) {
+    if (slot == globalBackgroundSlot) return globalBackground.id;
+    return _backgrounds[slot] ?? globalBackground.id;
+  }
 
   bool isPurchased(String itemId) =>
       itemId == ShopItem.defaultAvatar.id ||
@@ -52,7 +71,13 @@ class AppProvider extends ChangeNotifier {
 
   bool isEquipped(String itemId) => _equippedAvatar == itemId;
 
-  bool isBackgroundEquipped(String itemId) => _equippedBackground == itemId;
+  bool isBackgroundEquipped(String slot, String itemId) =>
+      resolvedBackgroundId(slot) == itemId;
+
+  bool isBackgroundInherited(String slot, String itemId) =>
+      slot != globalBackgroundSlot &&
+      _backgrounds[slot] == null &&
+      globalBackground.id == itemId;
 
   double get levelProgress {
     final current = _db.xpInCurrentLevel(totalXp);
@@ -88,10 +113,21 @@ class AppProvider extends ChangeNotifier {
         ? ShopItem.defaultAvatar.id
         : avatar;
 
-    final background = await _db.getSetting('equipped_background');
-    _equippedBackground = (background == null || background.isEmpty)
-        ? AppBackground.defaultBackground.id
-        : background;
+    _backgrounds.clear();
+    final globalBg = await _db.getSetting('equipped_background_global');
+    final legacyBg = await _db.getSetting('equipped_background');
+    _backgrounds[globalBackgroundSlot] =
+        (globalBg != null && globalBg.isNotEmpty)
+            ? globalBg
+            : ((legacyBg != null && legacyBg.isNotEmpty)
+                ? legacyBg
+                : AppBackground.defaultBackground.id);
+    for (final game in GameInfo.allGames) {
+      final value = await _db.getSetting('equipped_background_${game.id}');
+      if (value != null && value.isNotEmpty) {
+        _backgrounds[game.id] = value;
+      }
+    }
 
     _isLoaded = true;
     notifyListeners();
@@ -181,10 +217,18 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> equipBackground(String itemId) async {
+  /// Equips [itemId] to [slot]. Pass null to clear the override on a game
+  /// slot so it falls back to the global background.
+  Future<void> equipBackground(String slot, String? itemId) async {
+    if (itemId == null) {
+      _backgrounds.remove(slot);
+      await _db.setSetting('equipped_background_$slot', '');
+      notifyListeners();
+      return;
+    }
     if (!isPurchased(itemId)) return;
-    _equippedBackground = itemId;
-    await _db.setSetting('equipped_background', itemId);
+    _backgrounds[slot] = itemId;
+    await _db.setSetting('equipped_background_$slot', itemId);
     notifyListeners();
   }
 }

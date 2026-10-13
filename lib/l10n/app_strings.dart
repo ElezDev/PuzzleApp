@@ -66,6 +66,12 @@ class AppStrings {
       : 'Spend your coins on avatars and backgrounds';
   String get avatars => isSpanish ? 'Avatares' : 'Avatars';
   String get backgrounds => isSpanish ? 'Fondos' : 'Backgrounds';
+  String get general => isSpanish ? 'General' : 'General';
+  String get inherited => isSpanish ? 'Heredado' : 'Inherited';
+  String get useGeneralBackground => isSpanish
+      ? 'Usar fondo general'
+      : 'Use general background';
+  String get forScreen => isSpanish ? 'Para la pantalla' : 'For screen';
   String get buy => isSpanish ? 'Comprar' : 'Buy';
   String get equip => isSpanish ? 'Equipar' : 'Equip';
   String get equipped => isSpanish ? 'Equipado' : 'Equipped';
