@@ -27,6 +27,10 @@ class PuzlessApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
+    final background = provider.equippedBackground;
+    final colors = provider.isDarkMode
+        ? background.darkColors
+        : background.lightColors;
 
     return MaterialApp(
       onGenerateTitle: (context) => AppStrings.of(context).appTitle,
@@ -37,6 +41,18 @@ class PuzlessApp extends StatelessWidget {
       locale: provider.locale,
       supportedLocales: AppStrings.supportedLocales,
       localizationsDelegates: AppStrings.localizationsDelegates,
+      builder: (context, child) => AnimatedContainer(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: colors,
+          ),
+        ),
+        child: child,
+      ),
       home: const MainShell(),
     );
   }

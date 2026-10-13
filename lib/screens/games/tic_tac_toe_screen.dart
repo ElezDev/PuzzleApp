@@ -485,7 +485,7 @@ class _BoardCellState extends State<_BoardCell>
         decoration: BoxDecoration(
           color: widget.isWinCell
               ? color.withValues(alpha: 0.15)
-              : Theme.of(context).scaffoldBackgroundColor,
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Center(

@@ -14,8 +14,6 @@ class AppTheme {
   static const Color _surfaceDark = Color(0xFF1A1B2E);
   static const Color _cardLight = Color(0xFFFFFFFF);
   static const Color _cardDark = Color(0xFF252742);
-  static const Color _bgLight = Color(0xFFF0F1FA);
-  static const Color _bgDark = Color(0xFF12131E);
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -27,7 +25,7 @@ class AppTheme {
       surface: _surfaceLight,
       error: error,
     ),
-    scaffoldBackgroundColor: _bgLight,
+    scaffoldBackgroundColor: Colors.transparent,
     cardColor: _cardLight,
     textTheme: GoogleFonts.poppinsTextTheme(
       const TextTheme(
@@ -90,7 +88,7 @@ class AppTheme {
       surface: _surfaceDark,
       error: error,
     ),
-    scaffoldBackgroundColor: _bgDark,
+    scaffoldBackgroundColor: Colors.transparent,
     cardColor: _cardDark,
     textTheme: GoogleFonts.poppinsTextTheme(
       const TextTheme(

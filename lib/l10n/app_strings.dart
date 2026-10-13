@@ -62,9 +62,10 @@ class AppStrings {
   String get coins => isSpanish ? 'Monedas' : 'Coins';
   String get shop => isSpanish ? 'Tienda' : 'Shop';
   String get shopSubtitle => isSpanish
-      ? 'Gasta tus monedas en avatares'
-      : 'Spend your coins on avatars';
+      ? 'Gasta tus monedas en avatares y fondos'
+      : 'Spend your coins on avatars and backgrounds';
   String get avatars => isSpanish ? 'Avatares' : 'Avatars';
+  String get backgrounds => isSpanish ? 'Fondos' : 'Backgrounds';
   String get buy => isSpanish ? 'Comprar' : 'Buy';
   String get equip => isSpanish ? 'Equipar' : 'Equip';
   String get equipped => isSpanish ? 'Equipado' : 'Equipped';
@@ -101,6 +102,26 @@ class AppStrings {
       ? 'Se desbloquea en el nivel $level'
       : 'Unlocks at level $level';
   String get locked => isSpanish ? 'Bloqueado' : 'Locked';
+  String backgroundName(String id) {
+    switch (id) {
+      case 'bg_default':
+        return isSpanish ? 'Clásico' : 'Classic';
+      case 'bg_sunset':
+        return isSpanish ? 'Atardecer' : 'Sunset';
+      case 'bg_ocean':
+        return isSpanish ? 'Océano' : 'Ocean';
+      case 'bg_forest':
+        return isSpanish ? 'Bosque' : 'Forest';
+      case 'bg_midnight':
+        return isSpanish ? 'Medianoche' : 'Midnight';
+      case 'bg_neon':
+        return isSpanish ? 'Neón' : 'Neon';
+      case 'bg_galaxy':
+        return isSpanish ? 'Galaxia' : 'Galaxy';
+      default:
+        return id;
+    }
+  }
   String get changeName => isSpanish ? 'Cambiar nombre' : 'Change name';
   String get yourName => isSpanish ? 'Tu nombre' : 'Your name';
   String get cancel => isSpanish ? 'Cancelar' : 'Cancel';

@@ -382,7 +382,7 @@ class _MineCell extends StatelessWidget {
     Widget child;
     Color bg;
     if (cell.isRevealed) {
-      bg = theme.scaffoldBackgroundColor;
+      bg = theme.colorScheme.surface.withValues(alpha: 0.55);
       if (cell.isMine) {
         child = const Icon(Icons.dangerous_rounded,
             color: AppTheme.error, size: 20);

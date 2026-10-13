@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/database_helper.dart';
 import '../core/sound_manager.dart';
 import '../models/shop_item.dart';
+import '../models/app_background.dart';
 
 class AppProvider extends ChangeNotifier {
   final DatabaseHelper _db = DatabaseHelper();
@@ -15,6 +16,7 @@ class AppProvider extends ChangeNotifier {
   Map<String, dynamic> _profile = {};
   List<String> _purchases = [];
   String _equippedAvatar = ShopItem.defaultAvatar.id;
+  String _equippedBackground = AppBackground.defaultBackground.id;
   bool _isLoaded = false;
 
   bool get isDarkMode => _isDarkMode;
@@ -40,10 +42,17 @@ class AppProvider extends ChangeNotifier {
 
   ShopItem get equippedAvatar => ShopItem.byId(_equippedAvatar);
 
+  AppBackground get equippedBackground =>
+      AppBackground.byId(_equippedBackground);
+
   bool isPurchased(String itemId) =>
-      itemId == ShopItem.defaultAvatar.id || _purchases.contains(itemId);
+      itemId == ShopItem.defaultAvatar.id ||
+      itemId == AppBackground.defaultBackground.id ||
+      _purchases.contains(itemId);
 
   bool isEquipped(String itemId) => _equippedAvatar == itemId;
+
+  bool isBackgroundEquipped(String itemId) => _equippedBackground == itemId;
 
   double get levelProgress {
     final current = _db.xpInCurrentLevel(totalXp);
@@ -78,6 +87,11 @@ class AppProvider extends ChangeNotifier {
     _equippedAvatar = (avatar == null || avatar.isEmpty)
         ? ShopItem.defaultAvatar.id
         : avatar;
+
+    final background = await _db.getSetting('equipped_background');
+    _equippedBackground = (background == null || background.isEmpty)
+        ? AppBackground.defaultBackground.id
+        : background;
 
     _isLoaded = true;
     notifyListeners();
@@ -144,21 +158,33 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> purchaseItem(ShopItem item) async {
-    if (isPurchased(item.id)) return true;
-    final success = await _db.spendCoins(item.price);
+  Future<bool> purchase(String itemId, int price) async {
+    if (isPurchased(itemId)) return true;
+    final success = await _db.spendCoins(price);
     if (!success) return false;
-    await _db.recordPurchase(item.id);
+    await _db.recordPurchase(itemId);
     _profile = await _db.getProfile();
     _purchases = await _db.getPurchases();
     notifyListeners();
     return true;
   }
 
+  Future<bool> purchaseItem(ShopItem item) => purchase(item.id, item.price);
+
+  Future<bool> purchaseBackground(AppBackground item) =>
+      purchase(item.id, item.price);
+
   Future<void> equipAvatar(String itemId) async {
     if (!isPurchased(itemId)) return;
     _equippedAvatar = itemId;
     await _db.setSetting('equipped_avatar', itemId);
+    notifyListeners();
+  }
+
+  Future<void> equipBackground(String itemId) async {
+    if (!isPurchased(itemId)) return;
+    _equippedBackground = itemId;
+    await _db.setSetting('equipped_background', itemId);
     notifyListeners();
   }
 }
